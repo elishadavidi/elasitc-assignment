@@ -1,0 +1,50 @@
+/* src/App.css */
+.App {
+  text-align: center;
+  padding: 20px;
+}
+
+.search-input {
+  padding: 8px;
+  margin: 10px;
+  width: 300px;
+  direction: rtl;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  text-align: center;
+}
+
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+table th {
+  background-color: #f2f2f2;
+}
+
+button {
+  background-color: #f44336;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #d32f2f;
+}
+
+div {
+  margin-bottom: 20px;
+}
+
+.radio-buttons {
+  display: flex;
+  direction: rtl;
+  flex-direction: column;
+}
