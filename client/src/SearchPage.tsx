@@ -6,18 +6,31 @@ const SearchPage: React.FC = () => {
     const [query, setQuery] = useState('');
     const [searchType, setSearchType] = useState(SEARCH_TYPES.FREE);
     const [results, setResults] = useState<any[]>([]);
+    const [neighborhoodFilters, setNeighborhoodFilters] = useState<any[]>([]);
+    const [typeFilters, setTypeFilters] = useState<any[]>([]);
+    const [selectedNeighborhoods, setSelectedNeighborhoods] = useState<string[]>([]);
+    const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+
+    const displayFields = ['סוג','קבוצה','שם ראשי','שם מישני','שכונה'];
 
     const handleSearch = async () => {
         try {
             const response = await axios.post('http://localhost:5000/search', {
                 query,
-                searchType
+                searchType,
+                filters: {
+                    neighborhoods: selectedNeighborhoods,
+                    types: selectedTypes
+                }
             });
             setResults(response.data.results);
+            setNeighborhoodFilters(response.data.filters.neighborhoods);
+            setTypeFilters(response.data.filters.types);
         } catch (error) {
             console.error('Search failed', error);
         }
     };
+
 
     const handleDelete = async (id: string) => {
         try {
@@ -25,6 +38,18 @@ const SearchPage: React.FC = () => {
             setResults(results.filter(result => result.id !== id));
         } catch (error) {
             console.error('Delete failed', error);
+        }
+    };
+
+    const handleFilterChange = (filterType: 'neighborhood' | 'type', value: string) => {
+        if (filterType === 'neighborhood') {
+            setSelectedNeighborhoods((prev) =>
+                prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
+            );
+        } else if (filterType === 'type') {
+            setSelectedTypes((prev) =>
+                prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
+            );
         }
     };
 
@@ -65,6 +90,39 @@ const SearchPage: React.FC = () => {
                 </label>
             </div>
 
+            <div className="filters">
+                <div style={{direction: "rtl"}}>
+                    <h3>סוג</h3>
+                    {typeFilters.map((type) => (
+                        <label key={type.street}>
+                            <input
+                                type="checkbox"
+                                value={type.street}
+                                checked={selectedTypes.includes(type.street)}
+                                onChange={() => handleFilterChange('type', type.street)}
+                            />
+                            {type.street} ({type.count})
+                            <br/>
+                        </label>
+                    ))}
+                </div>
+                <div style={{direction: "rtl"}}>
+                    <h3>שכונה</h3>
+                    {neighborhoodFilters.map((neighborhood) => (
+                        <label key={neighborhood.city}>
+                            <input
+                                type="checkbox"
+                                value={neighborhood.city}
+                                checked={selectedNeighborhoods.includes(neighborhood.city)}
+                                onChange={() => handleFilterChange('neighborhood', neighborhood.city)}
+                            />
+                            {neighborhood.city} ({neighborhood.count})
+                            <br/>
+                        </label>
+                    ))}
+                </div>
+            </div>
+
             <button onClick={handleSearch}>!חפש</button>
 
             <div>
@@ -75,28 +133,25 @@ const SearchPage: React.FC = () => {
                             <thead>
                             <tr>
                                 <th>פעולות</th>
-                                {Object.keys(results[0]).map((field, index) => (
-                                    field !== 'id' && field !== 'deleted' && index < 6 ? (
-                                        <th key={index}>{field}</th>
-                                    ) : null
+                                {displayFields.map((name) => (
+                                    <th key={name}>{name}</th>
                                 ))}
                                 <th>ID</th>
                             </tr>
                             </thead>
                             <tbody>
                             {results.map((result) => (
-                                <tr key={result.id}>
-                                    <td>
-                                        <button onClick={() => handleDelete(result.id)}>מחק</button>
-                                    </td>
-                                    {Object.keys(result).map((field, index) => (
-                                        field !== 'id' && field !== 'deleted' && index < 6 ? (
-                                            <td key={index}>{result[field]}</td>
-                                        ) : null
-                                    ))}
-                                    <td>{result.id}</td>
-                                </tr>
-                            ))}
+                                    <tr key={result.id}>
+                                        <td>
+                                            <button onClick={() => handleDelete(result.id)}>מחק</button>
+                                        </td>
+                                        {displayFields.map((name) => (
+                                                <td key={name}>{result[name]}</td>
+                                        ))}
+                                        <td>{result.id}</td>
+                                    </tr>
+                                )
+                            )}
                             </tbody>
                         </table>
                     </div>

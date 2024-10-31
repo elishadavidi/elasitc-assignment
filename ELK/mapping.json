@@ -1,14 +1,16 @@
 {
   "mappings": {
     "properties": {
-      "שם ראשי": {
-        "type": "text"
+      "deleted": {
+        "type": "boolean"
       },
-      "תואר": {
-        "type": "text"
-      },
-      "שם מישני": {
-        "type": "text"
+      "סוג": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
       },
       "קבוצה": {
         "type": "text"
@@ -16,13 +18,24 @@
       "קבוצה נוספת": {
         "type": "text"
       },
-      "סוג": {
-        "type": "text"
-      },
       "קוד": {
         "type": "integer"
       },
       "שכונה": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "שם מישני": {
+        "type": "text"
+      },
+      "שם ראשי": {
+        "type": "text"
+      },
+      "תואר": {
         "type": "text"
       }
     }
